@@ -18,7 +18,7 @@ class Instagram extends AbstractProvider
      *
      * @var array
      */
-    public $defaultScopes = ['basic'];
+    public $defaultScopes = ['user_profile,user_media'];
 
     /**
      * Default host
@@ -26,6 +26,13 @@ class Instagram extends AbstractProvider
      * @var string
      */
     protected $host = 'https://api.instagram.com';
+
+    /**
+     * Media host
+     *
+     * @var string
+     */
+    protected $mediaHost = 'https://graph.instagram.com';
 
     /**
      * Gets host.
@@ -78,7 +85,23 @@ class Instagram extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return $this->host.'/v1/users/self?access_token='.$token;
+        return $this->mediaHost.'/me?access_token='.$token;
+    }
+
+    /**
+     * Returns array containing first page of media
+     *
+     * @param string $token
+     *
+     * @return array
+     */
+    public function getResourceOwnerMedia($token)
+    {
+        $mediaRequest = $this->getAuthenticatedRequest('GET', $this->mediaHost . '/me/media?fields=media_url', $token);
+
+        $media = $this->getResponse($mediaRequest);
+
+        return \json_decode($media->getBody()->getContents(), true);
     }
 
     /**
