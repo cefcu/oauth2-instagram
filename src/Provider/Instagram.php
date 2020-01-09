@@ -2,7 +2,9 @@
 
 namespace League\OAuth2\Client\Provider;
 
+use GuzzleHttp\Exception\ClientException;
 use League\OAuth2\Client\Provider\Exception\InstagramIdentityProviderException;
+use League\OAuth2\Client\Provider\Exception\InstagramInvalidTokenException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 
@@ -103,6 +105,28 @@ class Instagram extends AbstractProvider
 
         return \json_decode($media->getBody()->getContents(), true);
     }
+
+    /**
+     * Returns contents in body of response to inspect for error related to invalid OAuth token
+     *
+     * @param $token
+     *
+     * @throws InstagramInvalidTokenException
+     */
+    public function validateOauthToken($token)
+    {
+        $request = $this->getAuthenticatedRequest('GET', $this->mediaHost . '/me?fields=id,username', $token);
+
+        try {
+            $this->getResponse($request);
+        } catch (ClientException $e) {
+            if (strpos($e->getMessage(), 'Error validating access token: Session has expired')) {
+                throw new InstagramInvalidTokenException('You\'re API token is expired and must be reauthorized.', 400, null, $token);
+            }
+        }
+
+    }
+
 
     /**
      * Returns an authenticated PSR-7 request instance.
