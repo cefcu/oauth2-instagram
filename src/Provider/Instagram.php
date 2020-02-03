@@ -127,6 +127,17 @@ class Instagram extends AbstractProvider
 
     }
 
+    public function refreshAccessToken($token, $clientSecret)
+    {
+        $request = $this->getAuthenticatedRequest('GET', $this->mediaHost . '/access_token?grant_type=ig_exchange_token&client_secret=' . $clientSecret, $token);
+
+        try {
+            $response = $this->getResponse($request);
+            return \json_decode($response->getBody()->getContents(), true);
+        } catch (ClientException $e) {
+            throw $e;
+        }
+    }
 
     /**
      * Returns an authenticated PSR-7 request instance.
