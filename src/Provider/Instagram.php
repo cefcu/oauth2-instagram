@@ -129,7 +129,7 @@ class Instagram extends AbstractProvider
 
     public function refreshAccessToken($token, $clientSecret)
     {
-        $request = $this->getAuthenticatedRequest('GET', $this->mediaHost . '/refresh_access_token?grant_type=ig_exchange_token&client_secret=' . $clientSecret, $token);
+        $request = $this->getAuthenticatedRequest('GET', $this->mediaHost . '/refresh_access_token?grant_type=ig_refresh_token&client_secret=' . $clientSecret, $token);
 
         try {
             $response = $this->getResponse($request);
