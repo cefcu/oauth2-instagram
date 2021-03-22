@@ -99,7 +99,7 @@ class Instagram extends AbstractProvider
      */
     public function getResourceOwnerMedia($token)
     {
-        $mediaRequest = $this->getAuthenticatedRequest('GET', $this->mediaHost . '/me/media?fields=media_url,caption', $token);
+        $mediaRequest = $this->getAuthenticatedRequest('GET', $this->mediaHost . '/me/media?fields=media_url,caption,media_type,timestamp', $token);
 
         $media = $this->getResponse($mediaRequest);
 
